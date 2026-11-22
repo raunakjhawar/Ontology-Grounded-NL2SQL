@@ -62,7 +62,7 @@ Choose based on where business meaning will be maintained, which applications mu
 | The organization prefers to keep ontology integration within its managed Microsoft platform estate. | **Fabric ontologies** | This aligns platform ownership with existing Fabric operations. |
 | The application team needs control over the semantic layer's deployment and integration code, and can operate it. | **NVIDIA Auto-Ontology** | This approach supports an independently integrated layer. You should plan for hosting, upgrades, connector maintenance, credentials, access controls, and evaluation. |
 
-## 6. The payoff: shared meaning, inspectable execution
+## 6. The payoff
 
 A Fabric data agent can generate valid SQL, DAX, or KQL without establishing that the selected data represents the user's intended business concept. Ontology context narrows that gap through explicit entity definitions, relationship roles, and physical bindings. **Why does that matter?** Source selection and query generation can use published business definitions rather than rely solely on schema names and separately maintained instructions.
 
