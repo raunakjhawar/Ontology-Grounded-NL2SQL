@@ -1,9 +1,9 @@
-# Agentic Applications Need More Than Tools. They Need a Business Model.
+# Enterprise Ontologies - Connecting Agent Reasoning to Governed Data
 
 ## Why Microsoft Fabric ontologies and NVIDIA Auto Ontology deserve attention
 
 I recently gave my team a demo on ontologies and their role in agentic applications. It sparked quite a few questions, which motivated me to write this post. I wanted to explain why ontologies matter, what they add beyond agent instructions, and how they connect business meaning to the data and tools agents use.
-Enterprise agents can discover data, generate queries, call APIs, and coordinate tasks. But connecting those capabilities leaves a critical question unanswered: **does the agent output matches what the business expects?** For example, "Which customers missed target?" A sales agent can return revenue, a finance agent can return receivables. 
+Enterprise agents can discover data, generate queries, call APIs, and coordinate tasks. But connecting those capabilities leaves a critical question unanswered - **does the agent output matches what the business expects?** For example, "Which customers missed target?" A sales agent can return revenue, a finance agent can return receivables. 
 
 Ontologies address this gap by making business entities, relationships, and their data bindings explicit. Microsoft and NVIDIA offer different approaches to making that meaning available to agents. Their significance is not another way to chat with data. It is an architectural response to applications that must coordinate decisions across systems.
 
@@ -13,9 +13,9 @@ Ontologies address this gap by making business entities, relationships, and thei
 
 ## 1. Why agentic applications raise the stakes
 
-A single assistant can hide inconsistent definitions inside one conversation. A multi agent orchestration passes those inconsistencies to downstream tasks. Each component can complete its assigned task correctly while using a different entity namespace, time horizon, unit, or definition of a result (a correct business question ending up with an incorrect response or a technical construct). 
+A single assistant can hide inconsistent definitions inside one conversation. A multi agent orchestration passes those inconsistencies to downstream tasks. Each component can complete its assigned task correctly while using a different entity namespace, time horizon, unit, or definition of a result (classic case of a correct business question ending up with an incorrect response or a technical construct). 
 
-Successful tool calls establish that an operation ran, not that its output is semantically compatible with the next operation.
+Also worth calling here that a successful tool calls establish that an operation ran, not that its output is semantically compatible with the next operation or in this case - the actual business question!
 
 ## 2. Why shared domain contracts are stronger than duplicated instructions
 An agent's ability to reason does not give it an authoritative understanding of an organization's data. It still needs to establish what an entity represents, which relationships matter, and where the relevant facts live. **Ontologies make that business knowledge explicit and reusable.** Instead of asking each agent to reconstruct meaning from table names, documents, and conversation, the application can expose a maintained model of entities, identities, relationships, and data bindings.
@@ -24,7 +24,7 @@ This matters when an agent chooses a path through connected information. Two ent
 
 **Ontologies can reduce LLM hallucinations** by supplying explicit definitions, declared rules, and structured context instead of leaving domain meaning to unsupported statistical inference. The model still generates tokens probabilistically, but its choices can be grounded in known entities and relationships and checked against the available definitions. When bindings (relationships), approved calculations (metrics such as calculated KPIs which are not traditionally maintained as a strict schema), this supports **more deterministic execution**: the application resolves meaning through identifiable artifacts rather than repeatedly inventing it or hallucinating. An ontology alone neither makes generation deterministic nor guarantees a correct answer but the gain depends on the model actually using accurate context and the runtime checking its output.
 
-It is also worth clarifying that **a larger system instruction adds text, not necessarily stronger grounding for use cases such as NL2SQL.** These contain useful domain knowledge, but the model must still select the relevant definitions, reconcile conflicting rules, and translate prose into data bindings on each request. More context does not guarantee that every required dependency is applied, and consuming the same large instruction on every call increases token and time cost. The distinction is not short prompts versus long prompts rather it is **repeated interpretation versus explicit, maintained dependencies**.
+It is also worth clarifying which maybe often misunderstood is that **a larger system instruction adds text, not necessarily stronger grounding for use cases such as NL2SQL.** These contain useful domain knowledge, but the model must still select the relevant definitions, reconcile conflicting rules, and translate prose into data bindings on each request. More context does not guarantee that every required dependency is applied, and consuming the same large instruction on every call increases token and time cost. The distinction is not short prompts versus long prompts rather it is **repeated interpretation versus explicit, maintained dependencies**.
 
 ## 3. Microsoft Fabric Ontologies - connecting business meaning to the analytics estate
 
@@ -48,12 +48,19 @@ The same Fabric ontology capabilities are also available to Copilot Studio throu
 
 The value is not merely automated documentation. It is a reusable mapping from business concepts to data and relationships, accessible beyond one application's prompt. Consider several applications asking about customer exposure: a finance assistant, an HR workflow, and a sales agent. Each needs customer or user identity, authoritative measures for KPIs, and relationship paths. A shared semantic layer (Postgres vector store) offers a place to maintain those definitions instead of implementing three independent interpretations.
 
-Metadata-driven generation can accelerate the initial modeling work, but it cannot decide every business policy: whether revenue follows shipments or invoices still requires accountable domain ownership. Microsoft's approach is particularly relevant when meaning must connect to an existing Fabric estate, while NVIDIA's is relevant when developers want an independently integrated semantic layer across agent frameworks. These are architectural choices, not evidence that either delivers universally better accuracy.
-## 5. Measure the value where agents usually fail
+Metadata driven generation can accelerate the initial modeling work, but it cannot decide every business policy: whether revenue follows shipments or invoices still requires accountable domain ownership. 
 
-The business case should be tested against observable behavior. When agents use different customer identifiers, their results should reconcile through an approved account mapping. When several applications calculate revenue, they should reference the same governed measure definition. Known multi-shipment, multi-payment cases should preserve correct totals, and historical reporting should exclude payments received after the cut-off. These checks turn a broad claim about better context into evidence that the application produces more dependable results.
+## 5. Where should an enterprise invest?
 
-Definition changes provide another test. If finance changes a revenue policy or customer hierarchy, can the team identify the dependent consumers, refresh their definitions, and retest their outputs? The potential benefit is not just a better answer today, but less duplicated interpretation and more controlled maintenance as applications multiply. These are evaluation targets, not automatic product guarantees.
+Choose based on where business meaning will be maintained, which applications must consume it, and who will operate the integration not on a claim that one ontology produces smarter agents.
+
+| Enterprise situation | Investment to favor | Why it fits—and what to verify |
+|---|---|---|
+| Fabric and Power BI already host the authoritative analytical estate and Fabric data agents are the main consumers. | **Fabric ontologies** | Entity bindings and relationships can inform source selection within the existing estate. Preserve governed calculations in their owning models or sources. |
+| The priority is exposing Fabric business context to Copilot Studio agents. | **Fabric ontologies with Fabric IQ MCP** | Integration for consuming a selected ontology through Copilot Studio tools using MCP available now. |
+| Multiple agent frameworks need shared semantics outside a primarily Fabric centered architecture. | **NVIDIA Auto-Ontology** | This approach exposes semantic context through MCP, CLI, and API. |
+| The organization prefers to keep ontology integration within its managed Microsoft platform estate. | **Fabric ontologies** | This aligns platform ownership with existing Fabric operations. |
+| The application team needs control over the semantic layer's deployment and integration code, and can operate it. | **NVIDIA Auto-Ontology** | This approach supports an independently integrated layer. You should plan for hosting, upgrades, connector maintenance, credentials, access controls, and evaluation. |
 
 ## 6. The payoff: shared meaning, inspectable execution
 
@@ -61,8 +68,6 @@ A Fabric data agent can generate valid SQL, DAX, or KQL without establishing tha
 
 The value extends beyond one answer. Shared definitions give connected agents stable referents for interpreting and exchanging results, reducing duplicated interpretation across disciplines. Inspecting the selected source, available ontology context, and generated query helps trace a disputed result to its bindings or calculation. Definition revisions, temporal scope, units, and result granularity must still be carried and checked by the consuming application; shared context alone does not guarantee compatible outputs.
 
-The execution boundary remains unchanged: source engines run queries, governed measures implement calculations, and authorization controls enforce access. An ontology does not replace those mechanisms. It makes their business dependencies explicit and reusable. **The strategic gain is not more fluent generation; it is a clearer, testable contract between business intent, data interpretation, and agent decisions.**
+The execution boundary remains unchanged: source engines run queries, governed measures implement calculations, and authorization controls enforce access. An ontology does not replace those mechanisms. It makes their business dependencies explicit and reusable. **The strategic gain is not more fluent generation - it is a clearer, testable contract between business intent, data interpretation, and agent decisions.**
 
-**Building the most capable agentic system is not the goal; producing dependable business outcomes is.** Better reasoning, richer tools, and more sophisticated orchestration expand what agents can do, but do not establish what those actions mean within the business. Properly modeled, maintained, and integrated ontologies supply that missing foundation. Together with governed calculations and executable controls, they complete the architecture: agentic capability grounded in business meaning, not capability for its own sake.
-
----
+**Building the most capable agentic system is not the goal - producing dependable business outcomes is.** Better reasoning, richer tools, and more sophisticated orchestration expand what agents can do, but do not establish what those actions mean within the business. Properly modeled, maintained, and integrated ontologies supply that missing foundation. Together with governed calculations and executable controls, they complete the architecture: agentic capability grounded in business meaning, not capability for its own sake.
